@@ -1,0 +1,7 @@
+[markup]
+  [markup.highlight]
+    noClasses = false
+    style = "github-dark"
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true

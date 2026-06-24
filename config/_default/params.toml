@@ -1,0 +1,34 @@
+colorScheme = "blowfish"
+defaultAppearance = "dark"
+autoSwitchAppearance = true
+enableSearch = true
+enableCodeCopy = true
+
+[homepage]
+  layout = "profile"
+  showRecent = true
+
+[header]
+  layout = "fixed-fill-blur"
+
+[footer]
+  showMenu = true
+  showCopyright = true
+  showAppearanceSwitcher = true
+  showScrollToTop = true
+
+[article]
+  showDate = true
+  showDateUpdated = true
+  showAuthor = false
+  showHero = false
+  showTableOfContents = true
+  showReadingTime = true
+  showTaxonomies = true
+  showWordCount = true
+  showComments = true
+  showPagination = true
+
+[list]
+  showSummary = true
+  groupByYear = true

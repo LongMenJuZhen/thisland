@@ -1,0 +1,19 @@
+[[main]]
+  name = "ホーム"
+  pageRef = "/"
+  weight = 10
+
+[[main]]
+  name = "アーカイブ"
+  pageRef = "/posts/"
+  weight = 20
+
+[[main]]
+  name = "について"
+  pageRef = "/about/"
+  weight = 30
+
+[[main]]
+  name = "Source"
+  url = "https://github.com/LongMenJuZhen/thisland"
+  weight = 40

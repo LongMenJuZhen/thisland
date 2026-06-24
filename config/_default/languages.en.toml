@@ -1,0 +1,22 @@
+locale = "en"
+label = "English"
+weight = 2
+title = "Thisland"
+
+[params]
+  displayName = "EN"
+  isoCode = "en"
+  rtl = false
+  dateFormat = "2 January 2006"
+
+[params.author]
+  name = "薿薿"
+  image = "img/avatar.jpg"
+  headline = "诸法无我,诸行无常"
+  bio = "诸法无我,诸行无常"
+  links = [
+    { bilibili = "https://space.bilibili.com/283293701" },
+    { twitter = "https://x.com/caonimeidi313" },
+    { youtube = "https://www.youtube.com/@caonimeidi" },
+    { bluesky = "https://bsky.app/profile/caonimeidi.bsky.social" }
+  ]
