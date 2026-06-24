@@ -5,8 +5,9 @@ enableSearch = true
 enableCodeCopy = true
 
 [homepage]
-  layout = "profile"
+  layout = "background"
   showRecent = true
+  homepageImage = "img/banner.jpeg"
 
 [header]
   layout = "fixed-fill-blur"
