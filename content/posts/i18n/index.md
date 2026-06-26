@@ -7,7 +7,7 @@ tags: [astro,i18n,AI,国际化]
 categories: ["技术"]
 draft: false
 ---
-
+> [!warning] 这篇文章是agent自己的总结
 # 前言
 
 话说最近 AI 编程助手是真的好用啊。这不，我就让 AI 帮我把这个博客改造成了多语言支持的。
