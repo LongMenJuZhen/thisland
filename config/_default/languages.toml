@@ -1,0 +1,77 @@
+# 4 languages:
+#   - zh (default) - 简体中文
+#   - en           - English (canonical, mirrored to sak)
+#   - ja           - 日本語
+#   - sak          - Sarkaz 虚构语言 (contentDir = content/sak, 由 mirror-sak 脚本从 en 同步)
+# defaultContentLanguage lives in hugo.toml.
+
+[languages.zh]
+  label = "简体中文"
+  weight = 1
+  title = "Thisland"
+  [languages.zh.params]
+    displayName = "中"
+    isoCode = "zh"
+    rtl = false
+    [languages.zh.params.dateFormat]
+      published = "2006年1月2日"
+      lastUpdated = "2006年1月2日"
+  [languages.zh.params.author]
+    name = "薿薿"
+    image = "img/avatar.jpg"
+    headline = "诸法无我,诸行无常"
+    bio = "我有时候真的不知道bio和headline有什么区别"
+
+[languages.en]
+  label = "English"
+  weight = 2
+  title = "Thisland"
+  [languages.en.params]
+    displayName = "EN"
+    isoCode = "en"
+    rtl = false
+    [languages.en.params.dateFormat]
+      published = "2 January 2006"
+      lastUpdated = "2 January 2006"
+  [languages.en.params.author]
+    name = "薿薿"
+    image = "img/avatar.jpg"
+    headline = "诸法无我,诸行无常"
+    bio = "诸法无我,诸行无常"
+
+[languages.ja]
+  label = "日本語"
+  weight = 3
+  title = "Thisland"
+  [languages.ja.params]
+    displayName = "日"
+    isoCode = "ja"
+    rtl = false
+    [languages.ja.params.dateFormat]
+      published = "2006年1月2日"
+      lastUpdated = "2006年1月2日"
+  [languages.ja.params.author]
+    name = "薿薿"
+    image = "img/avatar.jpg"
+    headline = "诸法无我,诸行无常"
+    bio = "诸法无我,诸行无常"
+
+# 萨卡兹 Sarkaz — 虚构语言, 内容和英语完全一致, 仅字体换成 EndfieldByButan.
+# content/sak/ 由 scripts/mirror-sak.mjs 在 dev/build 前从 content/en 镜像生成,
+# 不入库, 不需要手动维护两份.  contentDir 默认为 content/<code>, 这里不必重复声明.
+[languages.sak]
+  label = "Sarkaz"
+  weight = 4
+  title = "Thisland"
+  [languages.sak.params]
+    displayName = "S"
+    isoCode = "sak"
+    rtl = false
+    [languages.sak.params.dateFormat]
+      published = "January 2, 2006"
+      lastUpdated = "January 2, 2006"
+  [languages.sak.params.author]
+    name = "薿薿"
+    image = "img/avatar.jpg"
+    headline = "诸法无我,诸行无常"
+    bio = "I still lack the passion to boldly introduce myself in front of others."

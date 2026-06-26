@@ -3,8 +3,20 @@ public/
 resources/
 .hugo_build.lock
 
+# 萨卡兹语言的内容是 .en.md 翻译分支的镜像, 由 scripts/mirror-sak.mjs 自动同步, 不入库
+content/**/*.sak.md
+
 # 系统文件
 .DS_Store
 Thumbs.db
 *.log
 *.err
+
+# Local Netlify folder
+.netlify
+
+# Hugo module vendor 目录, deploy 时通过 `hugo mod vendor` 重新生成
+_vendor/
+
+# pnpm 依赖 (用 pnpm-lock.yaml 锁定版本, node_modules 体积大不入库)
+node_modules/

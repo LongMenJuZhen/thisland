@@ -1,19 +1,73 @@
+# Stack v4 main menu — ja
+
 [[main]]
+  identifier = "home"
   name = "ホーム"
-  pageRef = "/"
+  url = "/"
   weight = 10
 
 [[main]]
+  identifier = "archive"
   name = "アーカイブ"
-  pageRef = "/posts/"
+  url = "/posts/"
   weight = 20
 
 [[main]]
+  identifier = "about"
   name = "について"
-  pageRef = "/about/"
+  url = "/about/"
+  weight = 35
+
+[[main]]
+  identifier = "search"
+  name = "検索"
+  url = "/search/"
   weight = 30
 
 [[main]]
-  name = "Source"
+  identifier = "source"
+  name = "ソース"
   url = "https://github.com/LongMenJuZhen/thisland"
   weight = 40
+
+[[social]]
+  identifier = "bilibili"
+  name = "Bilibili"
+  url = "https://space.bilibili.com/283293701"
+  params = { icon = "bilibili", newTab = true }
+  weight = 1
+
+[[social]]
+  identifier = "douyin"
+  name = "抖音"
+  url = "https://www.douyin.com/user/REPLACE_WITH_DOUYIN_USER_ID"
+  params = { icon = "tiktok", newTab = true }
+  weight = 2
+
+[[social]]
+  identifier = "tiktok"
+  name = "TikTok"
+  url = "https://www.tiktok.com/@caonimeidi"
+  params = { icon = "tiktok", newTab = true }
+  weight = 3
+
+[[social]]
+  identifier = "twitter"
+  name = "Twitter"
+  url = "https://x.com/caonimeidi313"
+  params = { icon = "twitter", newTab = true }
+  weight = 4
+
+[[social]]
+  identifier = "youtube"
+  name = "YouTube"
+  url = "https://www.youtube.com/@caonimeidi"
+  params = { icon = "youtube", newTab = true }
+  weight = 5
+
+[[social]]
+  identifier = "bluesky"
+  name = "Bluesky"
+  url = "https://bsky.app/profile/caonimeidi.bsky.social"
+  params = { icon = "bluesky", newTab = true }
+  weight = 6

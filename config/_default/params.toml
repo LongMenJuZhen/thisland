@@ -1,35 +1,125 @@
-colorScheme = "blowfish"
-defaultAppearance = "dark"
-autoSwitchAppearance = true
-enableSearch = true
-enableCodeCopy = true
+# Stack v4 site params.
+# 完整 schema 文档: https://stack.jimmycai.com/guide/configuration
 
-[homepage]
-  layout = "background"
-  showRecent = true
-  homepageImage = "img/banner.jpeg"
+mainSections = ["posts"]
 
-[header]
-  layout = "fixed-fill-blur"
+# Stack v4 期望 .Site.Params.dateFormat 是 {published = "...", lastUpdated = "..."}
+# 不同语言可在 languages.<lang>.params.dateFormat 覆盖.
+[dateFormat]
+  published = "2006-01-02"
+  lastUpdated = "2006-01-02"
 
-[footer]
-  showMenu = true
-  showCopyright = true
-  showAppearanceSwitcher = true
-  showScrollToTop = true
+[sidebar]
+  emoji = "🍋"
+  subtitle = "诸法无我,诸行无常"
+  avatar = "img/avatar.jpg"
+  compact = false
 
 [article]
-  showDate = true
-  showDateUpdated = true
-  showAuthor = false
-  showHero = false
-  showTableOfContents = true
-  showReadingTime = true
-  showTaxonomies = true
-  showWordCount = true
-  showComments = true
-  showPagination = true
+  # 文章页右侧 TOC 显隐 (theme-stack v4 的 single.html 用 article.toc 开关).
+  toc = true
 
 [list]
   showSummary = true
   groupByYear = true
+  paginate = 10
+
+[search]
+  enabled = true
+
+[code]
+  copyButton = true
+
+# 明 / 暗主题切换
+[colorScheme]
+  toggle = true
+  default = "auto"
+
+# giscus 评论
+[comments]
+  enabled = true
+  provider = "giscus"
+
+  [comments.giscus]
+    repo = "LongMenJuZhen/thisland"
+    repoID = "R_kgDOOqu3Ww"
+    category = "Comment"
+    categoryID = "DIC_kwDOOqu3W84C_6oF"
+    mapping = "pathname"
+    strict = "0"
+    reactionsEnabled = "1"
+    emitMetadata = "0"
+    inputPosition = "top"
+    lightTheme = "light"            # 关键：拆成两个
+    darkTheme = "dark_dimmed"      # 关键：拆成两个
+    lang = "zh-CN"
+    loading = "lazy"             # 推荐加上
+
+# 侧边 widget. 每项需 `type` 指向 layouts/_partials/widget/<type>.html
+# 可用: archives, categories, tag-cloud, toc, search, taxonomy
+[[widgets.homepage]]
+  type = "search"
+  [widgets.homepage.params]
+    title = "搜索"
+
+[[widgets.homepage]]
+  type = "archives"
+  [widgets.homepage.params]
+    title = "归档"
+
+[[widgets.homepage]]
+  type = "categories"
+  [widgets.homepage.params]
+    title = "分类"
+
+[[widgets.homepage]]
+  type = "tag-cloud"
+  [widgets.homepage.params]
+    title = "标签"
+
+# Stack v4 的 single.html 只读 widgets.page, 不分 post/page.
+# 原版 demo 静态页 (e.g. /zh/p/image-gallery/) 和文章页右侧都是空的.
+# 注释: 如果以后只想主页显示 widget 而静态页/文章页全宽, 只需保留 [[widgets.homepage]].
+
+
+# 文章页右侧 sidebar 空 —— 跟 Stack 主题默认一致.
+# 原版 demo 的文章页 (e.g. /zh/p/image-gallery/) 右侧无 widget.
+# TOC 在文章主体内 (article.showTableOfContents = true),
+# 分类/标签在 footer.
+
+# 背景: 用静态图片.
+[cover]
+  image = "img/banner.jpeg"
+  caption = ""
+  alt = "Thisland"
+  responsiveImages = true
+
+# Hero banner — 在 post 详情页之外的页面顶部插入一张全宽图片.
+# 由 layouts/_partials/hero.html 渲染, assets/scss/custom.scss 决定样式.
+#
+# height:
+#   -tall   66vh   (首页 hero,占上 2/3 视口)
+#   -large  60vh   (其他页面行内 banner,首屏约 3/5)
+#   -medium 45vh
+#   -small  30vh
+#
+# Per-page override: front matter 可用 `hero: false` 关闭单个页面,
+# 或 `hero: { image: "...", height: "medium" }` 覆盖.
+[hero]
+  enabled = true
+  image = "img/banner.jpeg"
+  # height 留空: 首页 IsHome=true 时 fallback 到 "tall" (2/3 视口),
+  # 其他页面 fallback 到 "large" (行内 banner).
+  # 可显式覆盖为 "medium" / "small" / 数字 (如 "50vh").
+  disableOnType = ["posts"]
+
+# Favicon — Stack 的 helper/image.html 只识别 page bundle 里的 .Resources,
+# 静态文件它会尝试 resources.GetRemote 拉取.  走 static 目录里直接被浏览器请求最简单.
+# 这里不设 params.favicon, 改在 layouts/_partials/head/extend.html 里手动注入.
+
+[footer]
+  showMenu = true
+  showCopyright = true
+  showSocial = true
+  showAppearanceSwitcher = true
+  showScrollToTop = true

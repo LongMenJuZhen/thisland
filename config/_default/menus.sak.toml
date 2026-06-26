@@ -1,4 +1,5 @@
-# Stack v4 main menu — en
+# Stack v4 main menu — sak
+# 萨卡兹语言菜单: 与英语同构, 字体由 assets/scss/custom.scss 渲染.
 
 [[main]]
   identifier = "home"

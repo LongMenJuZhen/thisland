@@ -1,12 +1,15 @@
 baseURL = "https://thisland.netlify.app/"
-locale = "zh-cn"
-defaultContentLanguage = "zh-cn"
+title = "Thisland"
+defaultContentLanguage = "zh"
+defaultContentLanguageInSubdir = false
 enableRobotsTXT = true
 hasCJKLanguage = true
 paginate = 10
+summaryLength = 30
 
 [outputs]
   home = ["HTML", "RSS", "JSON"]
+  page = ["HTML", "JSON"]
 
 [taxonomies]
   tag = "tags"

@@ -1,8 +1,9 @@
 [build]
   publish = "public"
-  command = "hugo --gc --minify"
+  # 镜像 content/en -> content/sak, 再 hugo 构建. 直接用 node 调用避免依赖 pnpm 安装.
+  command = "node scripts/mirror-sak.mjs && hugo --gc --minify"
 
 [build.environment]
-  HUGO_VERSION = "0.147.4"
+  HUGO_VERSION = "0.158.0"
   HUGO_ENV = "production"
   TZ = "Asia/Shanghai"
