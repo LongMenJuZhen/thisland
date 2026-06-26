@@ -1,0 +1,9 @@
+{
+ "compilerOptions": {
+  "paths": {
+   "*": [
+    "..\\_vendor\\github.com\\CaiJimmy\\hugo-theme-stack\\v4\\assets\\*"
+   ]
+  }
+ }
+}

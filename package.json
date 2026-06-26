@@ -1,0 +1,13 @@
+{
+  "name": "thisland",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "mirror:sak": "node scripts/mirror-sak.mjs",
+    "new:post": "node scripts/new-post.mjs",
+    "dev": "pnpm mirror:sak && hugo server",
+    "build": "pnpm mirror:sak && hugo --gc"
+  },
+  "packageManager": "pnpm@11.1.2"
+}
