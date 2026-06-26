@@ -9,19 +9,19 @@
 [[main]]
   identifier = "archive"
   name = "アーカイブ"
-  url = "/posts/"
+  url = "/ja/posts"
   weight = 20
 
 [[main]]
   identifier = "about"
   name = "について"
-  url = "/about/"
+  url = "/ja/about"
   weight = 35
 
 [[main]]
   identifier = "search"
   name = "検索"
-  url = "/search/"
+  url = "/ja/search"
   weight = 30
 
 [[main]]
@@ -71,3 +71,10 @@
   url = "https://bsky.app/profile/caonimeidi.bsky.social"
   params = { icon = "bluesky", newTab = true }
   weight = 6
+
+[[social]]
+  identifier = "github"
+  name = "GitHub"
+  url = "https://github.com/LongMenJuZhen"
+  params = { icon = "github", newTab = true }
+  weight = 7
