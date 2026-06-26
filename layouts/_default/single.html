@@ -1,10 +1,19 @@
+{{/* Article-page 模板.
+    Layout: 由主题 baseof.html 提供, 渲染 article 正文 + 内嵌 TOC + 右侧 widget 栏.
+
+    Scratch 变量:
+      TOCEnabled — 主题 _partials/article/article.html:4 读, 决定是否在文章
+                   主体顶部渲染可折叠的 <aside class="article-toc"> 目录.
+      hasWidget  — 主题 _partials/sidebar/right.html 与 baseof.html 都读,
+                   决定是否渲染右侧 widget 栏. 我们配了 widgets.page = [toc],
+                   所以文章页右侧会有 TOC widget 浮窗.
+
+    这两个 scratch 都按主题原版 single.html 的逻辑计算: article.toc (params.toml)
+    / .Params.toc (front matter) + 主题的 len .TableOfContents >= 100 阈值.
+    现在 widgets.page 配了 toc, $TOCWidgetEnabled 也是 true.
+*/}}
 {{ define "body-class" }}
   article-page
-  {{/*
-      Enable the right sidebar if
-          - Widget different from 'TOC' is enabled
-          - TOC is enabled and not empty
-  */}}
   {{- $HasWidgetNotTOC := false -}}
   {{- $TOCWidgetEnabled := false -}}
   {{- range .Site.Params.widgets.page -}}
@@ -23,8 +32,6 @@
 {{ end }}
 
 {{ define "main" }}
-  {{ partial "hero.html" . }}
-
   {{ partial "article/article.html" . }}
 
   {{ if .Params.links }}
@@ -44,5 +51,7 @@
 {{ end }}
 
 {{ define "right-sidebar" }}
-  {{ if .Scratch.Get "hasWidget" }}{{ partial "sidebar/right.html" (dict "Context" . "Scope" "page") }}{{ end}}
+  {{ if .Scratch.Get "hasWidget" }}
+    {{ partial "sidebar/right.html" (dict "Context" . "Scope" "page") }}
+  {{ end }}
 {{ end }}

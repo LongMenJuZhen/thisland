@@ -1,6 +1,4 @@
 {{ define "main" }}
-  {{ partial "hero.html" . }}
-
   <header>
     <h3 class="section-title">
       {{ if eq .Parent (.GetPage "/") }}
@@ -75,6 +73,10 @@
   {{ partialCached "footer/footer" . }}
 {{ end }}
 
+{{/* 只在归档页 (Section == "posts", 即 /posts/) 渲染右侧 widget 栏.
+    其他 list 页 (taxonomy 列表 /tags/.../、/categories/.../ 等) 不显示. */}}
 {{ define "right-sidebar" }}
-  {{ partial "sidebar/right.html" (dict "Context" . "Scope" "homepage") }}
+  {{ if eq .Section "posts" }}
+    {{ partial "sidebar/right.html" (dict "Context" . "Scope" "homepage") }}
+  {{ end }}
 {{ end }}

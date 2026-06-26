@@ -1,13 +1,15 @@
-{{/* Hero banner. Only renders on home page and search page. Other pages skip
-the hero. - Home page: tall (66vh, takes upper 2/3 of viewport) - Search page:
-large (60vh, single inline banner) Config (params.toml [hero] block): enabled =
-true # master switch image = "img/banner.jpeg" # path under static/ height = ""
-# default: per-layout (tall on home, large on search) Per-page override (front
-matter): hero: false # disable on this page hero: { image: "...", height:
-"medium" } # custom */}} {{- $enabled := .Site.Params.hero.enabled | default
-true -}} {{- $isHome := .IsHome -}} {{- $isSearch := eq .Layout "search" -}} {{-
-$isAllowed := or $isHome $isSearch -}} {{- $image := .Params.hero.image |
-default .Site.Params.hero.image -}} {{- $isDisabled := or (not $enabled) (not
+{{/* Hero banner. 实际显示规则 (hero.html 内部控制, 各 layout 文件都可安全
+partial 调用, 不显示的页面会直接跳过): - 首页 (IsHome): 渲染, 高度默认 "tall"
+(66vh, 占 2/3 视口) - 搜索页 (Layout=search): 渲染, 高度默认 "large" (60vh, 行内
+banner) - 其他所有页面: 跳过 (归档 /posts/、文章页 /posts/foo/、 taxonomy 列表
+/tags/.../、/categories/.../ 等) 配置 (params.toml [hero] block): enabled = true
+# master switch, 设为 false 全站关掉 image = "img/banner.jpeg" # static/
+下的路径 height = "" # 留空: 首页自动 tall, 搜索页自动 large Per-page override
+(单篇 front matter): hero: false # 该页关掉 hero: { image: "...", height:
+"medium" } # 自定义图片/高度 */}} {{- $enabled := .Site.Params.hero.enabled |
+default true -}} {{- $isHome := .IsHome -}} {{- $isSearch := eq .Layout "search"
+-}} {{- $isAllowed := or $isHome $isSearch -}} {{- $image := .Params.hero.image
+| default .Site.Params.hero.image -}} {{- $isDisabled := or (not $enabled) (not
 $isAllowed) (eq .Params.hero false) (not $image) -}} {{- if not $isDisabled -}}
 {{- $defaultHeight := "large" -}} {{- if $isHome -}} {{- $defaultHeight = "tall"
 -}} {{- end -}} {{- $heightClass := .Params.hero.height | default
