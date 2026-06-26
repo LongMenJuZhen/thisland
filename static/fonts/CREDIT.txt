@@ -1,0 +1,15 @@
+EndfieldByButan.ttf
+====================
+
+Author: 罗醭坦 (@lhclbt on GitHub / B 站)
+Source: https://github.com/lhclbt/Endfield_Font
+License: CC BY-NC 4.0 (https://creativecommons.org/licenses/by-nc/4.0/)
+
+This font is a re-creation of the original writing system used in
+Hypergryph's games Arknights and Arknights: Endfield, decoded from
+in-game and promotional materials. It may be used/re-created freely
+for NON-COMMERCIAL purposes only.
+
+This personal blog is non-commercial; the font is used to render
+the "Sarkaz" (萨卡兹) fictional language variant of the English
+content. All credit remains with the original author.

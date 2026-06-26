@@ -1,0 +1,147 @@
+/* ------------------------------------------------------------------ *
+ *  萨卡兹 (sak) 字体注入
+ *  ----------------------------------------------------------
+ *  仅当当前语言为 sak 时, 把页面整体字体换成 EndfieldByButan.
+ *  字体由 static/fonts/EndfieldByButan.ttf 提供 (CC BY-NC 4.0,
+ *  罗醭坦, 详见 /fonts/CREDIT.txt).
+ *  html 元素会被 Hugo 加 lang="sak", 用属性选择器只对 sak 语言生效.
+ * ------------------------------------------------------------------ */
+
+@font-face {
+    font-family: "EndfieldByButan";
+    src: url("/fonts/EndfieldByButan.ttf") format("truetype");
+    font-display: swap;
+}
+
+html[lang="sak"] body,
+html[lang="sak"] .article-content,
+html[lang="sak"] .post-content,
+html[lang="sak"] .prose,
+html[lang="sak"] h1,
+html[lang="sak"] h2,
+html[lang="sak"] h3,
+html[lang="sak"] h4,
+html[lang="sak"] h5,
+html[lang="sak"] h6,
+html[lang="sak"] p,
+html[lang="sak"] li,
+html[lang="sak"] a,
+html[lang="sak"] button,
+html[lang="sak"] span,
+html[lang="sak"] input,
+html[lang="sak"] textarea {
+    font-family:
+        "EndfieldByButan", ui-sans-serif, system-ui, sans-serif !important;
+    font-feature-settings: normal;
+}
+
+html[lang="sak"] body {
+    line-height: 1.55;
+}
+
+/* ------------------------------------------------------------------ *
+ *  Hero banner (layouts/_partials/hero.html)
+ *  ----------------------------------------
+ *  在 post 详情页之外的页面顶部插入一张全宽 banner 图, 无文字.
+ *  高度由图片自身宽高比决定, 容器跟着图片自适应 — 任何比例都不会裁剪.
+ *  容器 max-width 1280px + 居中, 让 hero 在宽屏上像个 "大卡片" 而不是 "整页 banner".
+ *  CSS 仍保留 .hero--tall / --large 等修饰类以便 per-page override,
+ *  默认 .hero 容器只设 max-height (防止超高图撑爆视口), 让图按原比例渲染.
+ * ------------------------------------------------------------------ */
+
+.hero {
+    width: 100%;
+    max-width: 1280px;          /* 宽度上限, 宽屏下不会撑得太开 */
+    margin-left: auto;           /* 居中 */
+    margin-right: auto;
+    position: relative;
+    background: var(--card-background, #fff);
+    border-radius: var(--card-border-radius, 1rem);
+    box-shadow: var(--shadow-l1, 0 1px 2px 0 rgba(0, 0, 0, 0.05));
+    margin-bottom: var(--gap-between-sections, 1.5rem);
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 90vh;
+    object-fit: contain;
+    object-position: center;
+}
+
+/* 高度修饰类 (per-page override) — 只设 max-height.
+   默认 .hero 容器已经按图片自适应. */
+.hero--tall   { max-height: 90vh; }
+.hero--large  { max-height: 75vh; }
+.hero--medium { max-height: 60vh; }
+.hero--small  { max-height: 45vh; }
+
+/* 移动端: 限制更小, 防止图太大占满屏 */
+@media (max-width: 768px) {
+    .hero           { max-height: 60vh; }
+    .hero--tall    { max-height: 60vh; }
+    .hero--large   { max-height: 50vh; }
+    .hero--medium  { max-height: 40vh; }
+    .hero--small   { max-height: 30vh; }
+}
+
+/* ------------------------------------------------------------------ *
+ *  i18n-switch 样式美化 (Stack 主题把 select 抹平了,展开后浏览器系统外观很丑)
+ *  ----------------------------------------------------------
+ *  注意: <option> 在不同浏览器渲染方式差异巨大 (Windows Chrome/Edge 表现最可控,
+ *  macOS Safari/Chrome 几乎无法定制 - 用系统 popup).
+ *  这里只针对可控的浏览器优化.
+ * ------------------------------------------------------------------ */
+
+#i18n-switch {
+    select {
+        /* 关闭状态: 加圆角和边距,跟整体卡片风格统一 */
+        padding: 0.2rem 0.5rem !important;
+        border-radius: var(--card-border-radius, 0.5rem) !important;
+        transition: background-color 0.15s ease;
+
+        &:hover {
+            background-color: var(--accent-color) !important;
+            color: var(--accent-color-text, #fff) !important;
+            border-radius: var(--card-border-radius, 0.5rem) !important;
+        }
+
+        &:focus {
+            outline: 2px solid var(--accent-color);
+            outline-offset: 1px;
+        }
+
+        option {
+            /* 选项: 卡片背景 + 主文字色 */
+            color: var(--card-text-color-main, #1f2328);
+            background-color: var(--card-background, #fff);
+            padding: 0.4rem 0.8rem;
+            font-size: 0.95em;
+
+            /* Chrome/Safari 选中态 (macOS 系统 popup 大部分不生效) */
+            &:checked {
+                background-color: var(--accent-color);
+                color: var(--accent-color-text, #fff);
+            }
+
+            /* hover 态 (Windows Chrome/Edge 支持) */
+            &:hover {
+                background-color: var(--card-background-hover, rgba(0, 0, 0, 0.05));
+            }
+        }
+    }
+
+    /* 深色模式适配 - 用 prefers-color-scheme 检测系统主题 */
+    @media (prefers-color-scheme: dark) {
+        select option {
+            color: var(--card-text-color-main, #e6e6e6);
+            background-color: var(--card-background, #1f2328);
+        }
+    }
+}

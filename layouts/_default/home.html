@@ -1,0 +1,16 @@
+{{ define "main" }}
+  {{ partial "hero.html" . }}
+
+  {{- $paginator := partial "helper/paginator.html" . -}}
+
+  <section class="article-list">
+    {{ range $index, $element := $paginator.Pages }}
+      {{ partial "article-list/default" . }}
+    {{ end }}
+  </section>
+
+  {{- partial "pagination.html" . -}}
+  {{- partial "footer/footer" . -}}
+{{ end }}
+
+{{ define "right-sidebar" }}{{ end }}

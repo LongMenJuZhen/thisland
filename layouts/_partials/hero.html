@@ -1,0 +1,18 @@
+{{/* Hero banner. Only renders on home page and search page. Other pages skip
+the hero. - Home page: tall (66vh, takes upper 2/3 of viewport) - Search page:
+large (60vh, single inline banner) Config (params.toml [hero] block): enabled =
+true # master switch image = "img/banner.jpeg" # path under static/ height = ""
+# default: per-layout (tall on home, large on search) Per-page override (front
+matter): hero: false # disable on this page hero: { image: "...", height:
+"medium" } # custom */}} {{- $enabled := .Site.Params.hero.enabled | default
+true -}} {{- $isHome := .IsHome -}} {{- $isSearch := eq .Layout "search" -}} {{-
+$isAllowed := or $isHome $isSearch -}} {{- $image := .Params.hero.image |
+default .Site.Params.hero.image -}} {{- $isDisabled := or (not $enabled) (not
+$isAllowed) (eq .Params.hero false) (not $image) -}} {{- if not $isDisabled -}}
+{{- $defaultHeight := "large" -}} {{- if $isHome -}} {{- $defaultHeight = "tall"
+-}} {{- end -}} {{- $heightClass := .Params.hero.height | default
+.Site.Params.hero.height | default $defaultHeight -}}
+<section class="hero hero--{{ $heightClass }}" aria-label="Hero banner">
+    <img src="{{ $image | relURL }}" alt="" loading="eager" decoding="async" />
+</section>
+{{- end -}}
