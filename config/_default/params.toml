@@ -10,8 +10,8 @@ mainSections = ["posts"]
   lastUpdated = "2006-01-02"
 
 [sidebar]
-  emoji = "🍋"
-  subtitle = "诸法无我,诸行无常"
+  emoji = "🍎"
+  subtitle = "诸法无我,诸行无常,没有第三条"
   avatar = "img/avatar.jpg"
   compact = false
 
@@ -56,16 +56,11 @@ mainSections = ["posts"]
     loading = "lazy"             # 推荐加上
 
 # 侧边 widget. 每项需 `type` 指向 layouts/_partials/widget/<type>.html
-# 可用: archives, categories, tag-cloud, toc, search, taxonomy
+# 可用: categories, tag-cloud, toc, search, taxonomy
 [[widgets.homepage]]
   type = "search"
   [widgets.homepage.params]
     title = "搜索"
-
-[[widgets.homepage]]
-  type = "archives"
-  [widgets.homepage.params]
-    title = "归档"
 
 [[widgets.homepage]]
   type = "categories"
@@ -77,15 +72,12 @@ mainSections = ["posts"]
   [widgets.homepage.params]
     title = "标签"
 
-# Stack v4 的 single.html 只读 widgets.page, 不分 post/page.
-# 原版 demo 静态页 (e.g. /zh/p/image-gallery/) 和文章页右侧都是空的.
-# 注释: 如果以后只想主页显示 widget 而静态页/文章页全宽, 只需保留 [[widgets.homepage]].
-
-
-# 文章页右侧 sidebar 空 —— 跟 Stack 主题默认一致.
-# 原版 demo 的文章页 (e.g. /zh/p/image-gallery/) 右侧无 widget.
-# TOC 在文章主体内 (article.showTableOfContents = true),
-# 分类/标签在 footer.
+# 文章页 (single.html) 走 widgets.page. 当前只配了 toc widget.
+# widgets.homepage 给归档页 (/posts/) 用.
+# 首页、taxonomy 列表 (/tags/...、/categories/...)、search 等其他页面都没有右侧栏
+# (见 layouts/_default/{home,list,search}.html 各自的 right-sidebar define).
+[[widgets.page]]
+  type = "toc"
 
 # 背景: 用静态图片.
 [cover]
@@ -96,6 +88,10 @@ mainSections = ["posts"]
 
 # Hero banner — 在 post 详情页之外的页面顶部插入一张全宽图片.
 # 由 layouts/_partials/hero.html 渲染, assets/scss/custom.scss 决定样式.
+#
+# 实际显示规则见 hero.html: 只在首页 (IsHome) 和搜索页 (Layout == "search") 渲染.
+# 其他页面 (归档 /posts/、文章页 /posts/foo/、taxonomy 列表等) 一律不显示,
+# 调用方 (layouts/_default/*.html) 仍然 partial 一下也无副作用, hero 内部会跳过.
 #
 # height:
 #   -tall   66vh   (首页 hero,占上 2/3 视口)
@@ -111,7 +107,6 @@ mainSections = ["posts"]
   # height 留空: 首页 IsHome=true 时 fallback 到 "tall" (2/3 视口),
   # 其他页面 fallback 到 "large" (行内 banner).
   # 可显式覆盖为 "medium" / "small" / 数字 (如 "50vh").
-  disableOnType = ["posts"]
 
 # Favicon — Stack 的 helper/image.html 只识别 page bundle 里的 .Resources,
 # 静态文件它会尝试 resources.GetRemote 拉取.  走 static 目录里直接被浏览器请求最简单.

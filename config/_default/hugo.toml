@@ -8,8 +8,8 @@ paginate = 10
 summaryLength = 30
 
 [outputs]
-  home = ["HTML", "RSS", "JSON"]
-  page = ["HTML", "JSON"]
+  home = ["HTML", "RSS"]
+  page = ["HTML"]
 
 [taxonomies]
   tag = "tags"
