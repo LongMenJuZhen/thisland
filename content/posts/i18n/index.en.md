@@ -1,0 +1,471 @@
+﻿---
+title: How I Internationalized My Blog with AI (Complete Record)
+date: 2026-05-19
+lastmod: 2026-05-19
+
+tags: [astro,i18n,AI,internationalization]
+category: Tech
+draft: false
+---
+
+# Introduction
+
+AI coding assistants are really useful these days, aren't they? So I had AI help me internationalize this blog.
+
+Here's the story: One day I stumbled upon Astro's official internationalization (i18n) tutorial. Then I thought, why not add i18n support to my blog? I mean, even though I write everything in Chinese, what if some foreigner wants to take a look?
+
+So I gave AI a bunch of instructions, had it reference the official docs, and got to work. Of course, I hit quite a few bumps along the way, but in the end, it actually worked out.
+
+# Why Bother with Internationalization?
+
+Adding i18n to a personal blog seems overkill at first glance. But think about it:
+
+1. **Internationalized Blog ≠ English Content**: You can write in Chinese but give foreigners an entry point
+2. **Value of Tech Articles**: Programmers writing tech articles sometimes get more readers from abroad (there's so much English content already)
+3. **Better SEO**: Google can index different language content more effectively
+4. **Learning Opportunity**: A good chance to understand Astro's i18n mechanism
+
+# Core Astro i18n Concepts
+
+Before we dive in, let's understand Astro's internationalization concepts.
+
+## Route-level i18n vs Content-level i18n
+
+Astro's i18n actually has two layers:
+
+### Route i18n (astro.config.mjs)
+
+This is URL-based multilingual support. For example:
+- `/` → Default language (Chinese)
+- `/en/` → English
+- `/ja/` → Japanese
+
+Configure in `astro.config.mjs`:
+
+```javascript
+i18n: {
+    locales: ["zh-cn", "en", "ja"],
+    defaultLocale: "zh-cn",
+    prefixDefaultLocale: false,  // Don't add prefix for default language
+    redirectToDefaultLocale: true,  // Redirect / to /zh-cn/
+}
+```
+
+Key parameters:
+- `locales`: List of supported languages in BCP 47 format
+- `defaultLocale`: The default/fallback language
+- `prefixDefaultLocale: false`: Default language has no prefix (`/posts/xxx/`), others have prefix (`/en/posts/xxx/`)
+- `redirectToDefaultLocale: true`: Auto-redirect root path to default language homepage
+
+### Content i18n (Content Collections)
+
+This is for internationalizing article content. Astro provides two approaches:
+
+**Approach One: frontmatter lang field**
+```yaml
+---
+title: My Article
+lang: en
+---
+```
+
+All language versions go in the same directory, distinguished by the `lang` field.
+
+**Approach Two: Subdirectory Structure**
+```
+src/content/posts/
+├── zh/           # Chinese posts
+│   ├── post1.md
+│   └── post2.md
+├── en/            # English posts
+│   └── post1.md   # English version of post1
+└── ja/            # Japanese posts
+    └── post1.md
+```
+
+## Why I Chose Approach Two
+
+At first, AI recommended Approach One (frontmatter lang field) because it's simpler. But I ultimately chose Approach Two because:
+
+1. **Independent Slugs**: With Approach One, different language versions share the same slug. Approach Two allows independent naming
+2. **More Flexible for Content Divergence**: If Chinese and English content differ significantly (which is very common), separate files are easier to manage
+3. **Avoid Conflicts**: If an article only exists in Chinese, Approach One gets awkward
+
+## Astro.currentLocale vs Route Prefix
+
+In Astro templates, you can get the current page's language via `Astro.currentLocale`:
+
+```astro
+---
+const locale = Astro.currentLocale; // Returns "zh-cn", "en", or "ja"
+---
+```
+
+But be careful: **`Astro.currentLocale` only tells you the language of the current route, it cannot directly filter content**. Why? Because Astro's `getStaticPaths` doesn't pass the locale parameter to filter functions by default.
+
+# Detailed Implementation
+
+## 1. Directory Restructure
+
+Organize posts into subdirectories by language:
+
+```bash
+src/content/posts/zh/   # Chinese
+src/content/posts/en/   # English
+src/content/posts/ja/   # Japanese
+```
+
+But there's a problem: Astro treats subdirectories as separate content collections!
+
+```bash
+# Astro generates these "auto collections":
+# posts-zh, posts-en, posts-ja
+# instead of the unified posts collection we want
+```
+
+**Solution**: Manually create `src/content.config.ts` (note: no `.` in the filename), explicitly define the collection:
+
+```typescript
+import { defineCollection, z } from "astro:content";
+
+const postsCollection = defineCollection({
+    schema: z.object({
+        title: z.string(),
+        date: z.date(),
+        lastmod: z.date().optional(),
+        draft: z.boolean().optional().default(false),
+        comments: z.boolean().optional().default(true),
+        description: z.string().optional().default(""),
+        image: z.string().optional().default(""),
+        tags: z.array(z.string()).optional().default([]),
+        category: z.string().optional().nullable().default(""),
+        lang: z.string().optional().default(""),
+    }),
+});
+
+export const collections = {
+    posts: postsCollection,  // Override auto-generated posts-zh, posts-en, posts-ja
+};
+```
+
+## 2. URL Adaptation
+
+This was the trickiest part.
+
+Chinese posts go to `/posts/xxx/`, English to `/en/posts/xxx/`. If a user is viewing `/posts/ASR/` and clicks the language switcher, theoretically it should jump to `/en/posts/ASR/`.
+
+### Problem One: getStaticPaths Doesn't Pass Locale
+
+Astro's `getStaticPaths` doesn't pass the locale parameter by default:
+
+```typescript
+// ❌ This way locale is undefined
+export async function getStaticPaths({ locale }) {
+    const posts = await getSortedPosts(locale);
+}
+
+// ✅ Need to hardcode
+export async function getStaticPaths() {
+    const posts = await getSortedPosts("en");
+}
+```
+
+This means you have to write a page file for each language route:
+```
+src/pages/
+├── posts/[...slug].astro      # Chinese posts
+├── en/posts/[...slug].astro   # English posts
+└── ja/posts/[...slug].astro   # Japanese posts
+```
+
+### Problem Two: entry.slug Changed
+
+In Astro 5's content collections, files in subdirectories have slugs that include the directory name:
+
+| File Path | entry.slug |
+|-----------|------------|
+| `posts/zh/ASR.md` | `zh/ASR` |
+| `posts/en/ASR.md` | `en/ASR` |
+
+This causes:
+1. Chinese post URL becomes `/posts/zh/ASR/`
+2. English post URL becomes `/posts/en/ASR/`
+
+So you gotta write a function to extract the pure slug:
+
+```typescript
+// src/utils/content-utils.ts
+
+/**
+ * Extract pure slug from entry.id (without language directory prefix)
+ * Example: "zh/ASR.md" → "ASR"
+ */
+export function getBaseSlug(id: string): string {
+    const lastSlash = id.lastIndexOf("/");
+    const filename = lastSlash >= 0 ? id.slice(lastSlash + 1) : id;
+    return filename.replace(/\.mdx?$/, "");
+}
+```
+
+Then replace all `entry.slug` with `getBaseSlug(entry.id)`.
+
+### Problem Three: Language Switcher Logic
+
+The language switcher needs to handle various path scenarios:
+
+| Current Path | Switch to English |
+|---------------|------------------|
+| `/` | `/en/` |
+| `/posts/ASR/` | `/en/posts/ASR/` |
+| `/ja` | `/en` |
+| `/ja/` | `/en/` |
+| `/ja/posts/ASR/` | `/en/posts/ASR/` |
+
+```typescript
+// src/components/LanguageSwitch.svelte
+
+function switchLocale(targetLocale: string) {
+    const pathname = window.location.pathname;
+    let cleanPath = pathname;
+
+    // Remove existing language prefix
+    for (const loc of locales) {
+        if (loc.code !== "zh-cn") {
+            // Handle both /ja and /ja/ cases
+            if (pathname === `/${loc.code}` || pathname.startsWith(`/${loc.code}/`)) {
+                cleanPath = pathname.slice(`/${loc.code}`.length) || "/";
+                break;
+            }
+        }
+    }
+
+    // Build new URL
+    if (targetLocale === "zh-cn") {
+        newUrl = cleanPath;
+    } else {
+        newUrl = `/${targetLocale}${cleanPath}`;
+    }
+
+    window.location.href = newUrl;
+}
+```
+
+## 3. Content Filtering Logic
+
+Filtering posts by language is the core functionality:
+
+```typescript
+// src/utils/content-utils.ts
+
+function getLangPrefixFromId(id: string): string {
+    // Extract language prefix from ID
+    // "zh/ASR.md" → "zh"
+    const slashIndex = id.indexOf("/");
+    return slashIndex >= 0 ? id.slice(0, slashIndex) : "zh";
+}
+
+function matchesLocale(id: string, locale?: string): boolean {
+    const prefix = getLangPrefixFromId(id);
+    // Normalize: zh-cn → zh, en → en, ja → ja
+    const target = locale === "zh-cn" ? "zh" : locale || "zh";
+    return prefix === target;
+}
+
+export async function getSortedPosts(locale?: string) {
+    const allBlogPosts = await getCollection("posts", ({ id, data }) => {
+        const draftFilter = import.meta.env.PROD ? data.draft !== true : true;
+        return draftFilter && matchesLocale(id, locale);
+    });
+    // ... sorting and other logic
+}
+```
+
+## 4. Translation System Overhaul
+
+The original translation was global:
+
+```typescript
+// ❌ Before - only reads siteConfig.lang
+export function i18n(key: I18nKey): string {
+    const lang = siteConfig.lang;
+    return getTranslation(lang)[key];
+}
+```
+
+Now it supports passing the language parameter:
+
+```typescript
+// ✅ Now - supports dynamic language
+export function i18n(key: I18nKey, lang?: string): string {
+    const targetLang = lang?.toLowerCase().replace("-", "_") || siteConfig.lang || "en";
+    return getTranslation(targetLang)[key];
+}
+```
+
+Then pass the current language in each component:
+
+```astro
+---
+const currentLocale = Astro.currentLocale || "zh-cn";
+const homeLabel = i18n(I18nKey.home, currentLocale); // Returns "首页", "Home", or "ホーム"
+---
+```
+
+## 5. Per-Page Locale Handling
+
+Each language's page needs to hardcode the locale:
+
+### Chinese Homepage `src/pages/[...page].astro`
+```typescript
+export const getStaticPaths = (async ({ paginate }) => {
+    const allBlogPosts = await getSortedPosts("zh-cn");  // Hardcoded
+    return paginate(allBlogPosts, { pageSize: PAGE_SIZE });
+}) satisfies GetStaticPaths;
+
+const currentLocale = Astro.currentLocale;  // Dynamic for display
+```
+
+### English Homepage `src/pages/en/[...page].astro`
+```typescript
+export const getStaticPaths = (async ({ paginate }) => {
+    const allBlogPosts = await getSortedPosts("en");  // Hardcoded
+    return paginate(allBlogPosts, { pageSize: PAGE_SIZE });
+}) satisfies GetStaticPaths;
+
+const currentLocale = "en";  // Hardcoded
+```
+
+Here's a trick: Although `Astro.currentLocale` does correctly return "en" during static builds, I still chose to hardcode locale in each language directory's pages for clarity and to avoid ambiguity.
+
+## 6. Image Path Issues
+
+Post image references also need updating. For example, Chinese posts in `posts/zh/init.md` reference `../image/init/xxx.png`:
+
+```markdown
+Original: In `posts/zh/init.md` write `![image](image/init/xxx.png)`
+Reason: Relative to `posts/` directory
+Changed: In `posts/zh/init.md` write `![image](../image/init/xxx.png)`
+Reason: Posts are now in `posts/zh/`, need to go up one level
+```
+
+## 7. Navigation Links
+
+Navigation bar links need language prefixes:
+
+```astro
+---
+const currentLocale = Astro.currentLocale || "zh-cn";
+---
+
+<!-- Before -->
+<a href="/about/">About</a>
+
+<!-- Now -->
+<a href={`/${currentLocale === "zh-cn" ? "" : `/${currentLocale}`}/about/`}>About</a>
+```
+
+Or wrap it in a utility function:
+
+```typescript
+// src/utils/url-utils.ts
+
+export function url(path: string, locale?: string): string {
+    const base = joinUrl("", import.meta.env.BASE_URL, path);
+    if (!locale || locale === "zh-cn" || locale === "zh_CN") {
+        return base;  // Default language has no prefix
+    }
+    return joinUrl("", import.meta.env.BASE_URL, `/${locale.replace("_", "-")}`, path);
+}
+```
+
+## 8. RSS and Sitemap
+
+### RSS
+
+Each language needs its own RSS feed:
+
+```
+src/pages/rss.xml.ts         → /rss.xml (Chinese)
+src/pages/en/rss.xml.ts      → /en/rss.xml (English)
+src/pages/ja/rss.xml.ts      → /ja/rss.xml (Japanese)
+```
+
+### Sitemap
+
+The `@astrojs/sitemap` integration handles multilingual sitemaps automatically, just configure the `i18n` option:
+
+```javascript
+// astro.config.mjs
+sitemap({
+    i18n: {
+        defaultLocale: "zh-cn",
+        locales: {
+            "zh-cn": "zh-CN",
+            "en": "en",
+            "ja": "ja",
+        },
+    },
+}),
+```
+
+## 9. Search Adaptation
+
+Pagefind supports multilingual indexes via the `data-pagefind-filter` attribute:
+
+```astro
+<div data-pagefind-filter={`lang:${currentLocale}`}>
+    <div data-pagefind-body>
+        <!-- Article content -->
+    </div>
+</div>
+```
+
+Filter by language when searching:
+
+```typescript
+const response = await window.pagefind.search(keyword, {
+    filters: { lang: currentLocale }
+});
+```
+
+## 10. Other Places That Needed Changes
+
+1. **Sidebar Components**: Category and tag links with language prefixes
+2. **Pagination Component**: Pagination links with language prefixes
+3. **PostCard Component**: Article card links with language prefixes
+4. **ArchivePanel Component**: Archive page filtered by language
+5. **Footer**: RSS and Sitemap links with language prefixes
+6. **SEO**: `<html lang="...">` needs correct setting
+
+# Final Results
+
+This blog now supports three languages:
+
+| Language | Route | Navigation Text |
+|----------|-------|----------------|
+| 🇨🇳 Chinese | `/` | 首页、归档、关于 |
+| 🇺🇸 English | `/en/` | Home、Archive、About |
+| 🇯🇵 Japanese | `/ja/` | ホーム、アーカイブ、このサイト |
+
+The language switcher is the globe icon button in the top right corner.
+
+Each language's posts are managed independently. The Chinese site only shows Chinese posts, the English site only shows English posts.
+
+# Closing Thoughts
+
+Overall, using AI to assist with coding is pretty reliable. It can help you write code, but key architectural decisions still need to be made by you. Like why choose Approach Two over Approach One, why hardcode locale in each page—these all require your own judgment.
+
+AI can help you:
+- ✅ Write code
+- ✅ Explain concepts
+- ✅ Provide examples
+- ✅ Debug issues
+
+AI cannot help you:
+- ❌ Make architectural decisions
+- ❌ Understand your business requirements
+- ❌ Judge what is the right direction
+
+Finally, thanks to AI, thanks to Claude, my blog finally got "internationalized" (even though there are only a few English posts).
+
+> I thought it'd take forever, but turns out chatting with AI while writing this article made the time fly by.
